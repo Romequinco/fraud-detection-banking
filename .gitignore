@@ -218,3 +218,20 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ---------------------------------------------------------------
+# Proyecto fraud-detection-banking
+# ---------------------------------------------------------------
+# Material bruto del profesor (privado, no se versiona)
+docs/_fuentes/
+
+# Datos: solo los CSV de trabajo en data/
+*.csv
+*.parquet
+*.joblib
+*.pkl
+*.keras
+!data/*.csv
+!data/output/*.csv
+
+.DS_Store
