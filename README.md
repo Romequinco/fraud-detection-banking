@@ -55,12 +55,12 @@ Variables anonimizadas, sin nulos. Los CSV están versionados: el repositorio es
 ## Documentación
 
 - [`docs/DECISIONES.md`](docs/DECISIONES.md): decisiones del proyecto.
-- `docs/teoria/` (pendiente):
+- `docs/teoria/` (síntesis completa del material de clase, con cita de la fuente exacta en cada concepto):
   - `00_fundamentos.md`: definiciones, tipos de anomalía (local, global, dependiente, agrupada), supervisión, ruido, data shift, OOD.
   - `01_metodos_clasicos.md`: distancias (Lp, coseno, Mahalanobis, kNN, LOF, DBSCAN), probabilidad (gaussiana, GMM, KDE), información (entropía, MI, KL, RBIG), reconstrucción y modelos (regresión, PCA, OCSVM, IsolationForest).
   - `02_deep.md`: autoencoders, AE convolucional, discriminador GAN, flows y autorregresivos.
   - `03_evaluacion_y_herramientas.md`: AUPR, desbalanceo/SMOTE, comparativa de métodos, explicabilidad de outliers, sklearn/PyOD.
-  - `notebook_partida.md`: notebook de partida del profesor y dataset.
+  - `notebook_partida.md`: formato exacto de la entrega, dataset, notebook de partida, línea base (AUPR 0,567), estilo de código y recomendaciones consolidadas del profesor. **Empezad por aquí.**
 - `docs/_fuentes/` (local, no versionado): enunciado original, notebook de partida, transcripción de la clase, slides (`Deteccion_de_anomalias.pdf`, `AD_algoritmos_deep.pdf`), papers y libro, notebooks `scripts_classic/` y `scripts_deep/` (versión `_clase` = solución) y zips originales. El detalle está en `_fuentes/INVENTARIO.md`.
 
 ## Cómo trabajar
@@ -82,7 +82,7 @@ jupyter lab notebooks/
 ## Estado
 
 - [x] Estructura del repositorio y datos
-- [ ] Documentación de teoría (`docs/teoria/`)
+- [x] Documentación de teoría (`docs/teoria/`)
 - [ ] 01 EDA
 - [ ] 02 Baselines no supervisados
 - [ ] 03 Supervisados

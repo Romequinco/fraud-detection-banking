@@ -89,7 +89,9 @@ scores_test = gm_model.score_samples(X_test)  # log p(x): MÁS BAJO = más anóm
 
 **Línea base medida** *(medido)*: el GMM de partida, con el signo invertido ($-\log p(x)$), da en el
 test del split común **AUPR = 0,567** y **ROC-AUC = 0,948**. El AUPR aleatorio es la prevalencia,
-**0,0017**. Este es el número que hay que batir.
+**0,0017**. Este es el número que hay que batir. La mejor baseline no supervisada medida hasta ahora es un GMM de 10
+componentes sobre `log1p(Amount)` + estandarizado, con **AUPR 0,662**. La tabla completa de distancias y
+probabilidad está en `01_metodos_clasicos.md`, Parte A, "Aplicación a nuestra práctica".
 
 Lectura del enfoque: es el enfoque "a menor probabilidad, más anómalo" de la clase
 (`teoria/01_metodos_clasicos.md`), entrenado **solo con datos normales** (lo que la literatura suele llamar
