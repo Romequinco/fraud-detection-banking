@@ -35,3 +35,35 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
 - **Pendiente:** confirmar si se quiere la cabecera. Si se lee con `pd.read_csv` sin `header=None`,
   la cabecera evita perder la primera fila.
 - **Estado:** ABIERTA
+
+### D-1.1 · Duplicados: agrupar, no eliminar
+
+- **Fecha:** 2026-10-16
+- **Evidencia (01 §3):** 4.167 filas duplicadas en construcción (10 entre fraudes), 0 conflictos de
+  etiqueta; 2.109 en producción; 4.314 filas de producción idénticas a alguna de construcción.
+- **Decisión:** se asigna un `group_id` a cada conjunto de filas idénticas y se hace la CV con
+  `StratifiedGroupKFold` sobre `df_train`, para que las copias no crucen train y validación. El split
+  fijo de la celda común no agrupa (1.643 filas de test, 5 de ellas fraudes, tienen copia en train): se
+  marca `dup_en_train` y el AUPR de test se reporta con y sin esas filas. Producción se puntúa
+  entera, en su orden y sin deduplicar.
+- **Estado:** CERRADA (se implementa en 01 §12 y §15)
+
+### D-1.2 · Transformación y escalado
+
+- **Fecha:** 2026-10-16
+- **Evidencia (01 §4, §6, §7):** colas muy pesadas (curtosis de Amount 466); `Amount` asimétrico y
+  con un máximo mayor en producción (38.537 frente a 29.485). Fraudes fuertemente correlados entre
+  sí (0,415 frente a 0,036).
+- **Decisión:** `log1p(Amount)` y escalado ajustado solo con train (no-fraude en los métodos no
+  supervisados). Distancias de Mahalanobis o modelos multivariantes, nunca euclídeas. El escalador solo
+  afecta a euclídea y kNN (Mahalanobis y GMM-full no cambian con escalados lineales). Se ajusta dentro
+  de cada fold en un `Pipeline` y se compara estándar frente a robusto en 02.
+- **Estado:** CERRADA en la transformación; ABIERTA en el tipo de escalador (se decide en 02)
+
+### D-1.3 · Representatividad del test interno
+
+- **Fecha:** 2026-10-16
+- **Evidencia (01 §10):** KS construcción/producción ≤ 0,005 en todas las variables; AUC de la
+  validación adversarial 0,496.
+- **Decisión:** no hay data shift. El AUPR de test/CV se toma como estimación del de producción.
+- **Estado:** CERRADA

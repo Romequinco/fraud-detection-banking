@@ -45,7 +45,7 @@ Variables anonimizadas, sin nulos. Los CSV están versionados: el repositorio es
 │   ├── teoria/            # síntesis del material de clase (extraído de _fuentes/)
 │   └── _fuentes/          # material bruto del profesor (NO versionado)
 └── notebooks/
-    ├── 01_EDA.ipynb
+    ├── 01_EDA_y_preprocesado.ipynb
     ├── 02_baselines_no_supervisados.ipynb
     ├── 03_supervisados.ipynb
     ├── 04_hibrido_y_ensemble.ipynb
