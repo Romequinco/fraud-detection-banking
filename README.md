@@ -81,6 +81,24 @@ jupyter lab notebooks/
 - `99_ENTREGA.ipynb` consolida al final el código real de `01`–`04` y debe poder ejecutarse sin el
   resto del repositorio.
 
+## Resultados hasta ahora
+
+AUPR en el test fijo (89 fraudes; aleatorio = 0,0017). Las diferencias de ±0,05 no son concluyentes
+con tan pocos fraudes: para elegir modelos se usa la validación cruzada.
+
+| Modelo | AUPR test | AUPR test sin duplicados | Fuente |
+|---|---|---|---|
+| GMM 5 componentes (partida del profesor) | 0,567 | — | `docs/teoria/notebook_partida.md` |
+| Regresión logística (`class_weight="balanced"`) | 0,685 | 0,658 | prueba de la celda común v2 |
+| GMM 10 componentes + `log1p_Amount` + `amount_freq` | 0,696 | 0,670 | prueba de la celda común v2 |
+
+Hallazgos clave del EDA (`01` §11): fraude 0,17 %, sin data shift entre construcción y producción,
+fraudes como cola correlada en X17/X14/X12/X10 e importes exactos repetidos (1,50 = 24 % de los
+fraudes).
+
+**Siguiente paso:** `02_baselines_no_supervisados`. Decisiones abiertas en `docs/DECISIONES.md`:
+D-2.1 (enfoque final) y D-3.1 (cabecera del CSV de entrega).
+
 ## Estado
 
 - [x] Estructura del repositorio y datos
