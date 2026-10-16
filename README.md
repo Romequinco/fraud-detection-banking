@@ -38,7 +38,7 @@ Variables anonimizadas, sin nulos. Los CSV están versionados: el repositorio es
 ├── data/
 │   ├── credit_card_construction.csv
 │   ├── credit_card_production.csv
-│   └── output/            # salidas generadas: NN_metricas_*.csv y scores_produccion.csv (entregable)
+│   └── output/            # 01_dataset_preparado.csv (lo leen 02–04), NN_*.csv y scores_produccion.csv (entregable)
 ├── docs/
 │   ├── enunciado.pdf
 │   ├── DECISIONES.md      # registro de decisiones D-X.n
@@ -70,10 +70,12 @@ pip install -r requirements.txt
 jupyter lab notebooks/
 ```
 
-- Todos los notebooks empiezan con la misma **celda común (no modificar)**: carga de datos, split
-  train/test 70/30 estratificado con `random_state=42` (el del notebook de partida), CV, AUPR,
-  curvas PR y `save_submission()`. Así los AUPR de los distintos miembros son comparables y el
-  `99_ENTREGA` es autocontenido sin ficheros de código externos.
+- **01** genera `data/output/01_dataset_preparado.csv`: split fijo train/test (el del profesor),
+  `fold` de validación (StratifiedGroupKFold por duplicados) y variables sin estado.
+- **02–04 y 99** empiezan con la misma **celda común v2 (no modificar)**: leen ese CSV y exponen
+  `X_train/X_test/X_prod`, `cv_splits`, `make_pipe()` (escalado dentro del fold), `cv_aupr()`,
+  `report()` (AUPR de test con y sin duplicados), `plot_pr()` y `save_submission()`. Así los AUPR de
+  todos los miembros son comparables.
 - Cada notebook guarda sus tablas en `data/output/NN_*.csv`.
 - Las decisiones relevantes se registran en `docs/DECISIONES.md`.
 - `99_ENTREGA.ipynb` consolida al final el código real de `01`–`04` y debe poder ejecutarse sin el
@@ -83,7 +85,7 @@ jupyter lab notebooks/
 
 - [x] Estructura del repositorio y datos
 - [x] Documentación de teoría (`docs/teoria/`)
-- [ ] 01 EDA
+- [x] 01 EDA y preprocesado
 - [ ] 02 Baselines no supervisados
 - [ ] 03 Supervisados
 - [ ] 04 Híbrido / ensemble y entregable

@@ -8,10 +8,13 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
 ### D-0.1 · Partición de validación común
 
 - **Fecha:** 2026-10-16
-- **Decisión:** split train/test 70/30 estratificado con `random_state=42` (el mismo del notebook de
-  partida), más `StratifiedKFold(5)` con la misma semilla para seleccionar modelos. Está implementado
-  en la celda común (no modificar) al inicio de cada notebook; sin código externo, para que el
-  `99_ENTREGA` sea autocontenido.
+- **Decisión:** train / validación / test. **Test** = el 30 % del split estratificado del profesor
+  (`random_state=42`, 89 fraudes), que solo se usa una vez, al final. **Validación** = rotatoria:
+  `StratifiedGroupKFold(5)` sobre el 70 % de train (206 fraudes, ~41 por fold) agrupando duplicados
+  (D-1.1). Se calcula una vez en 01 (columna `fold`) y 02–04 la leen con la celda común v2. Un val fijo
+  se descartó porque con ~44 fraudes el AUPR oscila ±0,07. Está implementado
+  en la celda común (no modificar) al inicio de cada notebook, sin código externo. Desde la v2,
+  02–99 leen `data/output/01_dataset_preparado.csv`, que genera 01 (§12–16) y se entrega con el 99.
 - **Justificación:** con 295 fraudes, el AUPR es muy ruidoso. Un split común hace comparables los
   resultados de todos los miembros.
 - **Estado:** CERRADA
@@ -66,4 +69,16 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
 - **Evidencia (01 §10):** KS construcción/producción ≤ 0,005 en todas las variables; AUC de la
   validación adversarial 0,496.
 - **Decisión:** no hay data shift. El AUPR de test/CV se toma como estimación del de producción.
+- **Estado:** CERRADA
+
+### D-1.4 · Variables nuevas y dataset exportado
+
+- **Fecha:** 2026-10-16
+- **Evidencia (01 §6, §13):** importes exactos repetidos en fraude (1,50 = 24 % de los fraudes);
+  mediana de `amount_freq` en train de 246 en fraudes frente a 79 en normales.
+- **Decisión:** se añaden `log1p_Amount` y `amount_freq` (frecuencia del importe exacto en construcción
+  + producción, **sin etiquetas**: transductivo pero sin fuga de la clase). Se exporta
+  `data/output/01_dataset_preparado.csv` (284.807 × 29, versionado) con las variables sin estado,
+  `split`, `fold`, `group_id` y `dup_en_train`; nada escalado. Conjunto por defecto en 02–04
+  (`FEATURES` de la celda común v2): X1..X20 + `log1p_Amount` + `amount_freq`.
 - **Estado:** CERRADA
