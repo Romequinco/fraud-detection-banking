@@ -114,5 +114,56 @@ Observado en el notebook de partida y en los `scripts_classic/` y `scripts_deep/
 
 ## 5. Recomendaciones del profesor aplicables a la entrega
 
-*(Lista consolidada a partir de los cuatro documentos de teoría; se completa al fusionar los
-borradores.)*
+Lista consolidada y sin repeticiones de lo que dijo el profesor en clase, ordenada según dónde se
+aplica. Las citas literales y el resto de recomendaciones están en la sección "Lo que dijo el
+profesor" de cada documento de `teoria/`.
+
+**Planteamiento (justificarlo en el 99)**
+- La definición de anomalía "depende de nosotros" y siempre falta algo que hay que fijar: umbral,
+  distancia, distribución, modelo o vecindad [00:14:02], [02:51:08], [02:58:43]. → Escribir y
+  justificar cada elección.
+- "Casi cualquier clasificador os valdrá… con pequeñas modificaciones"; "con lo que sabéis podéis
+  resolverlo sin nada nuevo" [01:01:52], [02:51:23]. → No hace falta exotismo: lo que se premia es
+  el AUPR.
+- "En realidad todo es lo mismo" (distancia, probabilidad, información, modelo): cada enfoque falla
+  si la elección de base no encaja con los datos [02:50:53]. → Comparar varias familias.
+
+**Datos (01 EDA)**
+- "Si algo se puede visualizar, se visualiza": entender primero en qué caso estamos [03:42:14].
+- Pintar el histograma antes de asumir una gaussiana [01:46:15]. Transformar una variable, por
+  ejemplo con un logaritmo, cambia qué es outlier [00:12:51]. → `Amount`.
+- Mahalanobis frente a euclídea: con escalas distintas, la euclídea "ordena mal los puntos";
+  normalizar primero equivale a usar Mahalanobis [01:29:39], [01:30:19].
+- Duplicados y features irrelevantes pueden romper métodos (de distancia y de probabilidad) [03:48:01].
+- Si conocéis propiedades del dominio, "metedlas en el modelo" [00:57:33].
+
+**Etiquetas y validación (02–04)**
+- **Con muy pocas anomalías etiquetadas, usarlas para validar más que para entrenar**; solo con
+  tantas como normales tiene sentido entrenar con ellas [01:51:46], [02:45:03]–[02:45:35].
+  → Nosotros tenemos 295 fraudes: comparar empíricamente los dos usos (D-2.1) y justificar la elección.
+- Con pocas etiquetas, supervisado ≈ no supervisado; lo que más cambia el resultado es **el tipo de
+  anomalía** (del 50 % al 100 % según el método) [03:46:00]–[03:47:11]. No free lunch [03:47:24].
+- Desbalanceo: undersampling (tira información), oversampling o SMOTE ("un poco más inteligente"),
+  asumiendo que los outliers vienen de "un millón de clases que nunca habéis visto" [02:48:55]–[02:50:04].
+- Escepticismo con los resultados: más reciente no significa mejor [03:45:07]; mirar los ejes y no
+  fiarse de las negritas [03:40:58], [03:46:27].
+
+**Modelos**
+- Probabilidad: con un buen modelo de densidad, mejor que distancias [01:39:33]. Nunca buscar
+  anomalías cerca de los picos [01:41:20]. El 95/99 % es una convención humana [01:49:45].
+- "El modelo tiene que ser suficientemente complicado" y hay que saber si es bueno [02:41:01].
+- Isolation Forest está "diseñado justo para anomaly detection" [03:00:36]. Los métodos de
+  vecindad (LOF, DBSCAN) "escalan muy mal" [02:59:58].
+- Autoencoder: error de reconstrucción o espacio latente + modelo clásico sencillo, que "funciona
+  muy bien" y es interpretable [03:52:25]–[03:54:11].
+- Deep y generativos: las mejores soluciones si hay cómputo y datos, pero más caros y obligan a
+  tomar más decisiones [03:58:28], [04:13:55].
+
+**Explicación y producción (99, reflexión final)**
+- Si se puede, explicar por qué algo es outlier: umbral y variables que causan la distancia
+  [03:24:27]. No usar LIME, SHAP ni contrafactuales directos sobre outliers [03:33:16].
+- Data shift: "va a pasar mucho en la práctica", también en finanzas. Guardar validación en
+  producción y vigilar [03:10:18], [03:14:04]. → Comprobar construcción frente a producción en el 01
+  y comentarlo en la reflexión.
+- "Siempre se suele acertar mirando para atrás, pero nunca mirando para delante" [01:00:29].
+  → Ser prudente con lo que el AUPR de test promete para producción.
