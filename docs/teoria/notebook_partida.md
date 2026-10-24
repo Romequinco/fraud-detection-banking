@@ -95,6 +95,11 @@ probabilidad está en `01_metodos_clasicos.md`, Parte A, "Aplicación a nuestra 
 preparado del 01 (`amount_freq` incluida) el GMM de 10 componentes llega a **0,696** y una regresión
 logística simple a **0,685** (ver README, "Resultados hasta ahora").
 
+**Actualización tras el 02 (2026-10-24):** el mejor no supervisado es un **GMM 5 sobre el eje de varianza
+mínima de los normales**, con **0,779 ± 0,060 en CV** y **0,736 en test** (D-2.4). El mismo GMM de partida
+da 0,567 con el orden de filas del profesor y 0,495 con el orden por `row_id`, porque cambia la
+inicialización por k-means (`02` §12). Las cifras anteriores de este párrafo son de pruebas previas al 02.
+
 Lectura del enfoque: es el enfoque "a menor probabilidad, más anómalo" de la clase
 (`teoria/01_metodos_clasicos.md`), entrenado **solo con datos normales** (lo que la literatura suele llamar
 *novelty detection* o detección semi-supervisada; nota del redactor). No usa las 295 etiquetas de fraude salvo para evaluar. El profesor dijo

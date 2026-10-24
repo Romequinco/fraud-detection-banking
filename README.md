@@ -77,6 +77,9 @@ jupyter lab notebooks/
   `report()` (AUPR de test con y sin duplicados), `plot_pr()` y `save_submission()`. Así los AUPR de
   todos los miembros son comparables.
 - Cada notebook guarda sus tablas en `data/output/NN_*.csv`.
+- **02** tarda unos 19 min de principio a fin (barridos de GMM, LOF y un autoencoder en PyTorch) y deja
+  `02_metricas_cv.csv`, `02_metricas_test.csv`, `02_scores.csv` (scores para el 04) y
+  `02_scores_produccion_no_supervisado.csv` (entregable de respaldo).
 - Las decisiones relevantes se registran en `docs/DECISIONES.md`.
 - `99_ENTREGA.ipynb` consolida al final el código real de `01`–`04` y debe poder ejecutarse sin el
   resto del repositorio.
@@ -107,7 +110,8 @@ fraudes quedan dentro de la nube normal y ningún detector de rareza los ve. Hay
 en `data/output/02_scores_produccion_no_supervisado.csv` y cinco scores para el 04 en `02_scores.csv`.
 
 **Siguiente paso:** `03_supervisados` (batir 0,779 en CV) y `04_hibrido_y_ensemble`. Decisiones abiertas
-en `docs/DECISIONES.md`: D-2.1 (enfoque final) y D-3.1 (cabecera del CSV de entrega).
+en `docs/DECISIONES.md`: D-2.1 (enfoque final, se cierra en 04), D-3.1 (cabecera del CSV de entrega) y
+D-3.3 (si el 99 rehace el preprocesado o lee el CSV del 01).
 
 ## Estado
 

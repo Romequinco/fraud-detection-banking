@@ -136,3 +136,15 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   reajustado con los normales de toda la construcción, mismo formato que D-3.1). Si el 03/04 no lo
   mejoran en CV, se entrega este. El entregable final (`scores_produccion.csv`) lo genera el 04.
 - **Estado:** CERRADA
+
+### D-3.3 · ¿99 autocontenido o dependiente del CSV del 01?
+
+- **Fecha:** 2026-10-24
+- **Contradicción a resolver:** el README dice que el 99 "debe poder ejecutarse sin el resto del
+  repositorio", pero la cabecera del 99 pide ejecutar antes el 01 y leer `01_dataset_preparado.csv`. Al
+  profesor solo le llegan el `.ipynb` y el CSV de scores.
+- **Alternativas:** (a) el 99 rehace el preprocesado del 01 (§12–§16) desde los dos CSV originales y luego
+  usa la misma lógica que la celda común; (b) el 99 lee `01_dataset_preparado.csv` y se asume que el
+  profesor tiene el repositorio.
+- **Recomendación:** (a), porque el entregable solo incluye el notebook y el CSV de scores.
+- **Estado:** ABIERTA (decidir antes de montar el 99)
