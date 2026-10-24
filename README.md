@@ -86,25 +86,35 @@ jupyter lab notebooks/
 AUPR en el test fijo (89 fraudes; aleatorio = 0,0017). Las diferencias de ±0,05 no son concluyentes
 con tan pocos fraudes: para elegir modelos se usa la validación cruzada.
 
-| Modelo | AUPR test | AUPR test sin duplicados | Fuente |
-|---|---|---|---|
-| GMM 5 componentes (partida del profesor) | 0,567 | — | `docs/teoria/notebook_partida.md` |
-| Regresión logística (`class_weight="balanced"`) | 0,685 | 0,658 | prueba de la celda común v2 |
-| GMM 10 componentes + `log1p_Amount` + `amount_freq` | 0,696 | 0,670 | prueba de la celda común v2 |
+| Modelo | AUPR CV (5 folds) | AUPR test | AUPR test sin duplicados | Fuente |
+|---|---|---|---|---|
+| GMM 5 componentes (partida del profesor) | 0,533 ± 0,077 | 0,567 / 0,495* | — / 0,463* | `docs/teoria/notebook_partida.md`, `02` §2, §12 |
+| Regresión logística (`class_weight="balanced"`) | — | 0,685 | 0,658 | prueba de la celda común v2 |
+| Mahalanobis (gaussiana única) | 0,655 ± 0,076 | 0,579 | 0,551 | `02` §3, §12 |
+| GMM 5 `full` (RobustScaler), 22 variables | 0,734 ± 0,075 | 0,617 | 0,589 | `02` §4, §12 |
+| **GMM 5 · 1 eje menor** (mejor no supervisado) | **0,779 ± 0,060** | **0,736** | **0,719** | `02` §9–§12 |
+
+\* El mismo GMM del profesor da 0,567 con su orden de filas y 0,495 con el orden por `row_id`: cambia la
+inicialización por k-means (`02` §12).
 
 Hallazgos clave del EDA (`01` §11): fraude 0,17 %, sin data shift entre construcción y producción,
 fraudes como cola correlada en X17/X14/X12/X10 e importes exactos repetidos (1,50 = 24 % de los
 fraudes).
 
-**Siguiente paso:** `02_baselines_no_supervisados`. Decisiones abiertas en `docs/DECISIONES.md`:
-D-2.1 (enfoque final) y D-3.1 (cabecera del CSV de entrega).
+Hallazgos clave del no supervisado (`02` §15): la señal vive en el **eje de varianza mínima de los
+normales** (X17, X12, X14, X10 a la vez) y la representación importa más que el detector; ~1/6 de los
+fraudes quedan dentro de la nube normal y ningún detector de rareza los ve. Hay un entregable de respaldo
+en `data/output/02_scores_produccion_no_supervisado.csv` y cinco scores para el 04 en `02_scores.csv`.
+
+**Siguiente paso:** `03_supervisados` (batir 0,779 en CV) y `04_hibrido_y_ensemble`. Decisiones abiertas
+en `docs/DECISIONES.md`: D-2.1 (enfoque final) y D-3.1 (cabecera del CSV de entrega).
 
 ## Estado
 
 - [x] Estructura del repositorio y datos
 - [x] Documentación de teoría (`docs/teoria/`)
 - [x] 01 EDA y preprocesado
-- [ ] 02 Baselines no supervisados
+- [x] 02 Baselines no supervisados
 - [ ] 03 Supervisados
 - [ ] 04 Híbrido / ensemble y entregable
 - [ ] 99 Entrega consolidada

@@ -28,7 +28,10 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
 - **Hipótesis inicial:** el supervisado o el híbrido deberían superar al no supervisado, porque hay
   etiquetas y el profesor recomienda usarlas cuando existen. Hay que verificarlo empíricamente en
   02–04.
-- **Estado:** ABIERTA
+- **Evidencia del 02 (2026-10-24):** el mejor no supervisado (D-2.4) da 0,779 ± 0,060 en CV y 0,736 en
+  test, por encima de la regresión logística simple (0,685 en test). Deja fuera ~1/6 de los fraudes
+  (dentro de la nube normal), que es lo que el 03/04 tienen que recuperar.
+- **Estado:** ABIERTA (se cierra en 04)
 
 ### D-3.1 · Formato del CSV de producción
 
@@ -58,10 +61,15 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   con un máximo mayor en producción (38.537 frente a 29.485). Fraudes fuertemente correlados entre
   sí (0,415 frente a 0,036).
 - **Decisión:** `log1p(Amount)` y escalado ajustado solo con train (no-fraude en los métodos no
-  supervisados). Distancias de Mahalanobis o modelos multivariantes, nunca euclídeas. El escalador solo
-  afecta a euclídea y kNN (Mahalanobis y GMM-full no cambian con escalados lineales). Se ajusta dentro
-  de cada fold en un `Pipeline` y se compara estándar frente a robusto en 02.
-- **Estado:** CERRADA en la transformación; ABIERTA en el tipo de escalador (se decide en 02)
+  supervisados). Distancias de Mahalanobis o modelos multivariantes, nunca euclídeas. El escalador se
+  ajusta dentro de cada fold en un `Pipeline`.
+- **Actualización (2026-10-24, 02 §4–§7):** el escalador **se elige por familia**. La frase original
+  ("Mahalanobis y GMM-full no cambian con escalados lineales") solo es cierta para el modelo: el EM de un
+  GMM `full` es invariante (con arranque aleatorio los tres escaladores dan 0,646), pero arranca de un
+  k-means euclídeo que sí depende de la escala. Con RobustScaler el GMM 5 da 0,734 frente a 0,660 con
+  StandardScaler (gana en 4–5 de 5 folds con 3 semillas). **Densidad (GMM): robust. Vecindad (kNN, LOF),
+  OCSVM y PCA-reconstrucción: standard** (robust deja que `amount_freq` domine la distancia).
+- **Estado:** CERRADA
 
 ### D-1.3 · Representatividad del test interno
 
@@ -81,4 +89,50 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   `data/output/01_dataset_preparado.csv` (284.807 × 29, versionado) con las variables sin estado,
   `split`, `fold`, `group_id` y `dup_en_train`; nada escalado. Conjunto por defecto en 02–04
   (`FEATURES` de la celda común v2): X1..X20 + `log1p_Amount` + `amount_freq`.
+- **Estado:** CERRADA
+
+### D-2.2 · Representación: cada detector con su conjunto de variables
+
+- **Fecha:** 2026-10-24
+- **Evidencia (02 §3, §6–§9):** la señal del fraude vive en la dirección de varianza mínima de los
+  normales ("eje menor": X17, X12, X14, X10… a la vez). Con solo ese eje, IF pasa de 0,504 a 0,738,
+  kNN de 0,533 a 0,746 y el GMM 5 de 0,734 a 0,779; PCA-reconstrucción con 21 de 22 componentes (= ese
+  eje al cuadrado) da 0,745. ECOD sube de 0,583 a 0,748 con las top 4 + importe. El top-k por AUPR
+  univariante es el mismo en el train de los 5 folds (sin fuga).
+- **Decisión:** la representación importa más que el detector. Cada detector usa el conjunto elegido
+  por CV en 02 §9; se prefieren los ejes menores (no usan etiquetas) salvo mejora clara. El eje menor es
+  candidato a variable del 03/04.
+- **Estado:** CERRADA
+
+### D-2.3 · Detectores de vecindad: referencia submuestreada
+
+- **Fecha:** 2026-10-24
+- **Evidencia (02 §5):** LOF ajustado con todos los normales da 0,073; deduplicados, 0,123; con una
+  submuestra de 20k normales, 0,693. Lo que decide es el tamaño del vecindario frente a la referencia
+  (k/n), no tanto los duplicados.
+- **Decisión:** kNN y LOF se ajustan con una submuestra de 20k normales del fold (k = 20, StandardScaler),
+  sin deduplicar. Compatible con D-1.1: solo cambia el conjunto de ajuste del detector; lo que se
+  puntúa nunca se deduplica.
+- **Estado:** CERRADA
+
+### D-2.4 · Mejor no supervisado y scores para el 04
+
+- **Fecha:** 2026-10-24
+- **Evidencia (02 §10–§12):** **GMM 5 · 1 eje menor** (RobustScaler + GMM 5 `full` sobre el eje menor):
+  0,779 ± 0,060 en CV y 0,736 en test (IC 95 % 0,642–0,822), frente a 0,495 del GMM del profesor en el
+  mismo test. Grupo de cabeza sin diferencias concluyentes: LOF 20 · 4 ejes menores (0,752) y ECOD · top 4
+  + importe (0,748). Las combinaciones por rangos suman como mucho +0,013, casi lo mismo que un control
+  sin diversidad (+0,008).
+- **Decisión:** referencia no supervisada para el 03 = GMM 5 · 1 eje menor. Sin ensemble no supervisado.
+  Pasan al 04 cinco scores poco correlados (ρ ≤ 0,46): GMM eje, LOF 4 ejes, ECOD top 4, GMM 5 full (22
+  variables) y AE 12, en `data/output/02_scores.csv` (OOF en train; ajuste con los normales de train en
+  test y producción).
+- **Estado:** CERRADA
+
+### D-3.2 · Entregable de respaldo
+
+- **Fecha:** 2026-10-24
+- **Decisión:** el 02 deja `data/output/02_scores_produccion_no_supervisado.csv` (GMM 5 · 1 eje menor
+  reajustado con los normales de toda la construcción, mismo formato que D-3.1). Si el 03/04 no lo
+  mejoran en CV, se entrega este. El entregable final (`scores_produccion.csv`) lo genera el 04.
 - **Estado:** CERRADA
