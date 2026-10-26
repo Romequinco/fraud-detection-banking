@@ -77,6 +77,9 @@ jupyter lab notebooks/
   `report()` (AUPR de test con y sin duplicados), `plot_pr()` y `save_submission()`. Así los AUPR de
   todos los miembros son comparables.
 - Cada notebook guarda sus tablas en `data/output/NN_*.csv`.
+- **03** tarda unos 10 min (Random Forest y MLP son lo más lento) y deja `03_metricas_cv.csv`,
+  `03_metricas_test.csv`, `03_scores.csv` (scores para el 04, mismo convenio que `02_scores.csv`) y
+  `03_scores_produccion_supervisado.csv` (respaldo supervisado).
 - **02** tarda unos 19 min de principio a fin (barridos de GMM, LOF y un autoencoder en PyTorch) y deja
   `02_metricas_cv.csv`, `02_metricas_test.csv`, `02_scores.csv` (scores para el 04) y
   `02_scores_produccion_no_supervisado.csv` (entregable de respaldo).
@@ -95,7 +98,10 @@ con tan pocos fraudes: para elegir modelos se usa la validación cruzada.
 | Regresión logística (`class_weight="balanced"`) | — | 0,685 | 0,658 | prueba de la celda común v2 |
 | Mahalanobis (gaussiana única) | 0,655 ± 0,076 | 0,579 | 0,551 | `02` §3, §12 |
 | GMM 5 `full` (RobustScaler), 22 variables | 0,734 ± 0,075 | 0,617 | 0,589 | `02` §4, §12 |
-| **GMM 5 · 1 eje menor** (mejor no supervisado) | **0,779 ± 0,060** | **0,736** | **0,719** | `02` §9–§12 |
+| GMM 5 · 1 eje menor (mejor no supervisado) | 0,779 ± 0,060 | 0,736 | 0,719 | `02` §9–§12 |
+| Regresión logística (`C=0.1`, sin pesar) | 0,781 ± 0,073 | 0,703 | 0,677 | `03` §2, §9 |
+| Random Forest 300 | 0,851 ± 0,060 | 0,793 | 0,776 | `03` §3, §9 |
+| **XGBoost d3** (mejor supervisado) | **0,865 ± 0,060** | **0,814** | **0,801** | `03` §6–§9 |
 
 \* El mismo GMM del profesor da 0,567 con su orden de filas y 0,495 con el orden por `row_id`: cambia la
 inicialización por k-means (`02` §12).
@@ -109,9 +115,16 @@ normales** (X17, X12, X14, X10 a la vez) y la representación importa más que e
 fraudes quedan dentro de la nube normal y ningún detector de rareza los ve. Hay un entregable de respaldo
 en `data/output/02_scores_produccion_no_supervisado.csv` y cinco scores para el 04 en `02_scores.csv`.
 
-**Siguiente paso:** `03_supervisados` (batir 0,779 en CV) y `04_hibrido_y_ensemble`. Decisiones abiertas
-en `docs/DECISIONES.md`: D-2.1 (enfoque final, se cierra en 04), D-3.1 (cabecera del CSV de entrega) y
-D-3.3 (si el 99 rehace el preprocesado o lee el CSV del 01).
+Hallazgos clave del supervisado (`03` §12): **XGBoost d3 gana al mejor no supervisado** en los 5 folds y en
+test (+0,078, IC 95 % 0,033–0,124). La logística solo lo iguala; lo que decide es la frontera no lineal.
+**No se reequilibra**: pesos, SMOTE y undersampling no mejoran la AUPR. LightGBM por defecto diverge
+(0,063) por `min_child_weight` = 0,001; configurado, empata con XGBoost. Recupera 15 de los 36 fraudes que
+el 02 no veía (X17/X14 compensadas, X4 alta, importe bajo). Deja `03_scores.csv` (3 scores para el 04) y un
+respaldo supervisado en `data/output/03_scores_produccion_supervisado.csv`.
+
+**Siguiente paso:** `04_hibrido_y_ensemble` (batir 0,865 en CV con los scores del 02 + el XGBoost). Decisiones
+abiertas en `docs/DECISIONES.md`: D-2.1 (enfoque final, se cierra en 04), D-3.1 (cabecera del CSV de entrega)
+y D-3.3 (si el 99 rehace el preprocesado o lee el CSV del 01).
 
 ## Estado
 
@@ -119,6 +132,6 @@ D-3.3 (si el 99 rehace el preprocesado o lee el CSV del 01).
 - [x] Documentación de teoría (`docs/teoria/`)
 - [x] 01 EDA y preprocesado
 - [x] 02 Baselines no supervisados
-- [ ] 03 Supervisados
+- [x] 03 Supervisados
 - [ ] 04 Híbrido / ensemble y entregable
 - [ ] 99 Entrega consolidada

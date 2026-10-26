@@ -31,6 +31,9 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
 - **Evidencia del 02 (2026-10-24):** el mejor no supervisado (D-2.4) da 0,779 ± 0,060 en CV y 0,736 en
   test, por encima de la regresión logística simple (0,685 en test). Deja fuera ~1/6 de los fraudes
   (dentro de la nube normal), que es lo que el 03/04 tienen que recuperar.
+- **Evidencia del 03 (2026-10-26):** el mejor supervisado, XGBoost d3 (D-2.5), da 0,865 ± 0,060 en CV y
+  0,814 en test: gana al GMM eje en los 5 folds y en test (+0,078, IC 95 % 0,033–0,124). La hipótesis inicial
+  se confirma para el enfoque individual; queda por ver en el 04 si el híbrido añade algo.
 - **Estado:** ABIERTA (se cierra en 04)
 
 ### D-3.1 · Formato del CSV de producción
@@ -148,3 +151,28 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   profesor tiene el repositorio.
 - **Recomendación:** (a), porque el entregable solo incluye el notebook y el CSV de scores.
 - **Estado:** ABIERTA (decidir antes de montar el 99)
+
+### D-2.5 · Mejor supervisado y scores para el 04
+
+- **Fecha:** 2026-10-26
+- **Evidencia (03 §2–§9):** logística 0,781–0,786 (empata con el GMM eje); Random Forest 0,851, Extra Trees
+  0,841, MLP 0,790; **XGBoost d3 0,865 ± 0,060** en CV y 0,814 en test (IC 95 % 0,731–0,886). La AUPR es
+  plana en profundidad (d = 2–6), ritmo de aprendizaje y semillas (± 0,002). El eje menor como variable no
+  aporta a los árboles; quitar `amount_freq` cuesta 0,007.
+- **Decisión:** referencia supervisada para el 04 = `XGBClassifier(n_estimators=400, learning_rate=0.05,
+  max_depth=3, subsample=0.8, colsample_bytree=0.7, random_state=42)` sobre `FEATURES`. Pasan al 04 tres
+  scores en `data/output/03_scores.csv` (XGBoost d3, RF, LR; OOF en train y ajuste con todo train en test y
+  producción, mismo convenio que D-2.4). Respaldo supervisado en
+  `data/output/03_scores_produccion_supervisado.csv` (XGBoost d3 reajustado con toda la construcción).
+- **Estado:** CERRADA
+
+### D-2.6 · Desbalanceo: no se reequilibra
+
+- **Fecha:** 2026-10-26
+- **Evidencia (03 §2, §4, §5):** sobre XGBoost, `scale_pos_weight` 10 empata (+0,001) y 50 baja (−0,003);
+  SMOTE al 5 % baja (−0,009) y undersampling al 2 % baja más (−0,039, hasta −0,128 en un fold). En la LR,
+  `class_weight="balanced"` también baja (−0,006). LightGBM por defecto diverge (0,063) por
+  `min_child_weight` = 0,001: con ≥ 5 se recupera (0,862).
+- **Decisión:** ningún reequilibrado (la AUPR solo mide el orden). En boosting, `min_child_weight` ≥ 1
+  (el valor por defecto de XGBoost) es obligatorio.
+- **Estado:** CERRADA
