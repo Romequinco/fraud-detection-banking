@@ -65,10 +65,24 @@ Variables anonimizadas, sin nulos. Los CSV están versionados: el repositorio es
 
 ## Cómo trabajar
 
-```bash
-pip install -r requirements.txt
-jupyter lab notebooks/
+Entorno local en Windows (Python 3.13, CPU). El kernel del proyecto se llama **Fraude (.venv)**.
+Para recrearlo con las versiones verificadas:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-windows.lock.txt
+.\.venv\Scripts\python.exe -m ipykernel install --user --name fraud-detection-banking --display-name "Fraude (.venv)"
 ```
+
+Para abrir los notebooks con el entorno ya creado:
+
+```powershell
+.\.venv\Scripts\python.exe -m jupyterlab notebooks/
+```
+
+Seleccionar **Fraude (.venv)** como kernel del notebook. En VS Code también se puede elegir
+directamente `.venv\Scripts\python.exe`. No hace falta activar el entorno para usar los comandos
+anteriores. `.venv/` está excluido de Git; `requirements.txt` mantiene la lista general de dependencias.
 
 - **01** genera `data/output/01_dataset_preparado.csv`: split fijo train/test (el del profesor),
   `fold` de validación (StratifiedGroupKFold por duplicados) y variables sin estado.

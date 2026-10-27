@@ -1,0 +1,4 @@
+modelo,fraudes detectados,recall,recupera del original,pierde del original,falsas alarmas (%)
+XGBoost original,183.0,0.8883495145631068,0.0,0.0,1.0007369443607008
+XGBoost + score del GMM,184.0,0.8932038834951457,2.0,1.0,1.0007369443607008
+XGBoost + cinco scores del 02,183.0,0.8883495145631068,2.0,2.0,0.99822463404013

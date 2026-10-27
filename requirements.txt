@@ -13,3 +13,5 @@ pyod
 torch
 jupyter
 nbformat
+nbclient
+ipykernel

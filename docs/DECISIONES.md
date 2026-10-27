@@ -34,7 +34,8 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
 - **Evidencia del 03 (2026-10-26):** el mejor supervisado, XGBoost d3 (D-2.5), da 0,865 ± 0,060 en CV y
   0,814 en test: gana al GMM eje en los 5 folds y en test (+0,078, IC 95 % 0,033–0,124). La hipótesis inicial
   se confirma para el enfoque individual; queda por ver en el 04 si el híbrido añade algo.
-- **Estado:** ABIERTA (se cierra en 04)
+- **Evidencia del 04 (2026-10-27):** comparación de tres entradas del mismo XGBoost d3, con scores recalculados mediante cinco folds externos y cinco internos por grupo: original 0,861, + GMM 0,863, + cinco scores 0,861 en CV. Elección previa al test: **XGBoost original** (D-2.7).
+- **Estado:** CERRADA (04, D-2.7)
 
 ### D-3.1 · Formato del CSV de producción
 
@@ -175,4 +176,33 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   `min_child_weight` = 0,001: con ≥ 5 se recupera (0,862).
 - **Decisión:** ningún reequilibrado (la AUPR solo mide el orden). En boosting, `min_child_weight` ≥ 1
   (el valor por defecto de XGBoost) es obligatorio.
+- **Estado:** CERRADA
+
+
+### D-2.7 · Comparación híbrida y modelo final
+
+- **Fecha:** 2026-10-27
+- **Alcance:** solo las tres comparaciones solicitadas: XGBoost original, XGBoost + score del GMM
+  del eje menor y XGBoost + los cinco scores seleccionados en el 02. Se congela la configuración
+  d3 del 03; no se prueban otros clasificadores, mezclas ni nuevos hiperparámetros.
+- **Validación:** mismos cinco folds externos del 01. Dentro de cada entrenamiento externo se
+  recalculan cinco folds internos por grupo para generar los scores OOF del entrenamiento híbrido;
+  el fold externo se puntúa con detectores reajustados solo con los normales del entrenamiento externo.
+  ECOD selecciona sus cuatro variables dentro del entrenamiento correspondiente. Los OOF globales del
+  02 no se reutilizan como features de esa CV. Las configuraciones históricas del 02–03 permanecen
+  seleccionadas previamente; el procedimiento no elimina ese optimismo.
+- **Evidencia:** AUPR de CV: original **0,861 ± 0,060**,
+  + GMM **0,863 ± 0,057** y + cinco scores
+  **0,861 ± 0,056**. En test: **0,813**,
+  **0,811** y **0,813**, respectivamente.
+- **Criterio previo al test:** un híbrido debe mejorar la media al menos 0,005 y ganar en al menos
+  cuatro de cinco folds. Se prefieren menos scores salvo mejora consistente de las cinco columnas
+  frente a una. Es una regla práctica de estabilidad y mejora, no significación estadística.
+- **Decisión:** **XGBoost original**. El test confirma y no cambia esa elección. Se reajusta con toda
+  construcción (170.884 filas, 295 fraudes); si usa scores, se regeneran OOF sobre toda construcción
+  y los detectores se reajustan con todas sus normales para puntuar producción.
+- **Entregable:** `data/output/scores_produccion.csv`, 113.923 filas, una columna `score`, orden original.
+  Configuración, versiones y firma del dataset en `04_seleccion_modelo.json`; métricas, scores y
+  auditoría en `04_*.csv`. Las cifras reproducidas en 04 prevalecen para esta comparación sobre la
+  narración histórica del 03. El test ya examinado en 02–03 no es una evaluación externa nueva.
 - **Estado:** CERRADA
