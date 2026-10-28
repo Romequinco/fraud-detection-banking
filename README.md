@@ -87,7 +87,7 @@ anteriores. `.venv/` está excluido de Git; `requirements.txt` mantiene la lista
 
 - **01** genera `data/output/01_dataset_preparado.csv`: split fijo train/test (el del profesor),
   `fold` de validación (StratifiedGroupKFold por duplicados) y variables sin estado.
-- **02–04 y 99** empiezan con la misma **celda común v2 (no modificar)**: leen ese CSV y exponen
+- **02–05** empiezan con la misma **celda común v2 (no modificar)**: leen ese CSV y exponen
   `X_train/X_test/X_prod`, `cv_splits`, `make_pipe()` (escalado dentro del fold), `cv_aupr()`,
   `report()` (AUPR de test con y sin duplicados), `plot_pr()` y `save_submission()`. Así los AUPR de
   todos los miembros son comparables.
@@ -108,8 +108,12 @@ anteriores. `.venv/` está excluido de Git; `requirements.txt` mantiene la lista
   `catboost` y `optuna`. Deja `05_metricas_cv.csv`, `05_aupr_por_fold.csv`, `05_metricas_test.csv`,
   `05_optuna.csv`, `05_seleccion_modelo.json` y el **entregable final `scores_produccion.csv`**.
 - Las decisiones relevantes se registran en `docs/DECISIONES.md`.
-- `99_ENTREGA.ipynb` consolida al final el código real de `01`–`05` y debe poder ejecutarse sin el
-  resto del repositorio.
+- **99** (`99_ENTREGA.ipynb`, el notebook que se entrega) consolida `01`–`05` en 160 celdas y se ejecuta
+  de principio a fin **solo con los dos CSV originales** (unos 17 min): rehace el preprocesado del 01 (y, si
+  encuentra `01_dataset_preparado.csv`, comprueba que coincide), re-ejecuta los experimentos que justifican
+  cada decisión, resume en tablas todo lo demás que se probó y genera `scores_produccion.csv`. Busca los CSV
+  en la carpeta del notebook, en `data/` o en `../data/`. Necesita `xgboost`, `lightgbm` y `catboost` (no
+  `pyod`, `imbalanced-learn`, `optuna` ni `torch`).
 
 ## Resultados hasta ahora
 
@@ -171,10 +175,13 @@ reajustada con toda construcción, y el XGBoost del 04 queda como respaldo en `0
 El mismo XGBoost no da resultados idénticos en equipos distintos (0,865 en el del 04, 0,858 aquí), otra razón
 para preferir la mezcla, que es más estable.
 
-**Siguiente paso:** `99_ENTREGA` (solo tiene el esqueleto). Hay que consolidar 01–05 en un notebook y
-cerrar antes **D-3.3**, la única decisión abierta: si el 99 rehace el preprocesado del 01 desde los CSV
-originales (recomendado) o lee `01_dataset_preparado.csv`. El modelo final no usa scores del 02: basta con
-el preprocesado del 01 y los cuatro clasificadores de la mezcla (`05` §11, Conectores).
+Entrega consolidada (`99`): reproduce desde los CSV originales todas las cifras clave (preparación idéntica a
+la del 01; GMM del profesor 0,533; GMM eje menor 0,779 / 0,736; XGBoost 0,858 / 0,817; mezcla 0,866 / 0,822) y
+genera un `scores_produccion.csv` prácticamente idéntico al del 05 (Spearman 1,000; diferencia máxima 2·10⁻⁵).
+En este equipo, el híbrido XGBoost + score del GMM eje da Δ +0,005 en los 5 folds oficiales, pero gana solo en
+3 de 5 (8 de 15 en la validación ampliada): tampoco cumple la regla, como en el 04.
+
+**Para entregar (29-oct, 18:30):** `notebooks/99_ENTREGA.ipynb` y `data/output/scores_produccion.csv`.
 
 ## Estado
 
@@ -185,4 +192,4 @@ el preprocesado del 01 y los cuatro clasificadores de la mezcla (`05` §11, Cone
 - [x] 03 Supervisados
 - [x] 04 Híbrido / ensemble y entregable (`scores_produccion.csv` generado)
 - [x] 05 Optimización final (mezcla de cuatro modelos; nuevo `scores_produccion.csv`)
-- [ ] 99 Entrega consolidada
+- [x] 99 Entrega consolidada (autocontenida, ejecutada; genera el entregable)

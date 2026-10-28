@@ -146,7 +146,8 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
 - **Decisión:** el 02 deja `data/output/02_scores_produccion_no_supervisado.csv` (GMM 5 · 1 eje menor
   reajustado con los normales de toda la construcción, mismo formato que D-3.1). Si el 03/04 no lo
   mejoran en CV, se entrega este. El entregable final (`scores_produccion.csv`) lo genera el 04.
-- **Actualización (2026-10-28):** el entregable final lo genera ahora el 05 (D-2.8). Los respaldos son, en
+- **Actualización (2026-10-28):** el modelo del entregable final lo fija el 05 (D-2.8), y el 99 lo
+  regenera desde los CSV originales (D-3.3). Los respaldos son, en
   orden: `04_scores_produccion_xgb.csv` (XGBoost d3 del 04), `03_scores_produccion_supervisado.csv` y
   `02_scores_produccion_no_supervisado.csv`.
 - **Estado:** CERRADA
@@ -165,7 +166,13 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   Con (a), el 99 no necesita reproducir los detectores del 02 para entrenarlo: le basta con el
   preprocesado del 01 (`log1p_Amount`, `amount_freq`, grupos de duplicados y folds) y el XGBoost. Es la
   única decisión abierta y lo primero que hay que resolver al montar el 99.
-- **Estado:** ABIERTA (decidir antes de montar el 99)
+- **Decisión (2026-10-28):** **(a)**. El 99 lee solo `credit_card_construction.csv` y
+  `credit_card_production.csv` (en la carpeta del notebook, en `data/` o en `../data/`), rehace el
+  preprocesado del 01 y expone las mismas utilidades que la celda común v2. Si encuentra
+  `01_dataset_preparado.csv`, comprueba que coincide (split, folds, grupos y variables): coincide. Entrena con
+  los valores originales, no con el CSV redondeado del 01; el entregable resultante es prácticamente idéntico
+  al del 05 (Spearman 1,000, diferencia máxima 2·10⁻⁵) y es el que se entrega.
+- **Estado:** CERRADA
 
 ### D-2.5 · Mejor supervisado y scores para el 04
 
