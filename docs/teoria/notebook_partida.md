@@ -26,8 +26,8 @@
   signo** antes de guardar: con el signo al revés, el AUPR se hunde por debajo del aleatorio.
 - **Orden de filas:** no se puede reordenar, filtrar ni deduplicar producción antes de puntuar.
   Hay que puntuar las 113.923 filas en su orden original.
-- **Cabecera del CSV:** pendiente (D-3.1 en `DECISIONES.md`). Ahora se guarda con la cabecera
-  `score`.
+- **Cabecera del CSV:** **sin cabecera** (D-3.1 en `DECISIONES.md`): solo los 113.923 scores, uno por
+  línea, como dice el enunciado.
 
 ## 2. El dataset
 

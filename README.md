@@ -177,11 +177,12 @@ para preferir la mezcla, que es más estable.
 
 Entrega consolidada (`99`): reproduce desde los CSV originales todas las cifras clave (preparación idéntica a
 la del 01; GMM del profesor 0,533; GMM eje menor 0,779 / 0,736; XGBoost 0,858 / 0,817; mezcla 0,866 / 0,822) y
-genera un `scores_produccion.csv` prácticamente idéntico al del 05 (Spearman 1,000; diferencia máxima 2·10⁻⁵).
+genera un `scores_produccion.csv` prácticamente idéntico al del 05 (Spearman 1,000; diferencia máxima 8·10⁻⁵).
 En este equipo, el híbrido XGBoost + score del GMM eje da Δ +0,005 en los 5 folds oficiales, pero gana solo en
 3 de 5 (8 de 15 en la validación ampliada): tampoco cumple la regla, como en el 04.
 
-**Para entregar (29-oct, 18:30):** `notebooks/99_ENTREGA.ipynb` y `data/output/scores_produccion.csv`.
+**Para entregar (29-oct, 18:30):** `notebooks/99_ENTREGA.ipynb` y `data/output/scores_produccion.csv` (una sola
+columna **sin cabecera**: 113.923 líneas, una por transacción de producción y en su orden; D-3.1).
 
 ## Estado
 

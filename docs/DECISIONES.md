@@ -51,6 +51,11 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   la primera fila.
 - **Actualización (2026-10-28):** el 04 genera `scores_produccion.csv` con este formato, y también los
   respaldos del 02 y el 03. Se mantiene la cabecera.
+- **Cambio final (2026-10-28):** el entregable va **sin cabecera**, al pie de la letra del enunciado ("un
+  fichero csv con una sola columna (el score asignado a cada fila del fichero de producción)"): 113.923
+  líneas, una por fila de producción, en su orden, sin índice. Lo genera el 99 con
+  `save_submission()` (`header=False`). Los CSV de trabajo y de respaldo (`02_`, `03_`, `04_…`) conservan la
+  cabecera `score`; no se entregan.
 - **Estado:** CERRADA
 
 ### D-1.1 · Duplicados: agrupar, no eliminar
@@ -171,7 +176,7 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   preprocesado del 01 y expone las mismas utilidades que la celda común v2. Si encuentra
   `01_dataset_preparado.csv`, comprueba que coincide (split, folds, grupos y variables): coincide. Entrena con
   los valores originales, no con el CSV redondeado del 01; el entregable resultante es prácticamente idéntico
-  al del 05 (Spearman 1,000, diferencia máxima 2·10⁻⁵) y es el que se entrega.
+  al del 05 (Spearman 1,000, diferencia máxima 8·10⁻⁵) y es el que se entrega.
 - **Estado:** CERRADA
 
 ### D-2.5 · Mejor supervisado y scores para el 04
@@ -253,7 +258,7 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   `CatBoostClassifier(iterations=1000, learning_rate=0.05, depth=6)`, `LGBMClassifier(min_child_weight=5)` y
   `RandomForestClassifier(300, min_samples_leaf=2)`, todos con semilla 42 y las 22 variables de `FEATURES`. Se
   reajustan con toda construcción y cada score se convierte en su rango dentro de producción.
-- **Entregable:** `data/output/scores_produccion.csv` (113.923 × 1, cabecera `score`, valores en (0, 1]). El
+- **Entregable:** `data/output/scores_produccion.csv` (113.923 × 1, sin cabecera desde el 99, D-3.1; valores en (0, 1]). El
   del 04 se guarda en `04_scores_produccion_xgb.csv`. Spearman 0,925 entre ambos; comparten el 63,9 % del 1 %
   superior. Las 6 copias exactas de fraudes de construcción en producción quedan en el 0,03 % superior.
 - **Estado:** CERRADA
