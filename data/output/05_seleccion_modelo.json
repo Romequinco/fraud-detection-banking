@@ -1,0 +1,55 @@
+{
+  "modelo": "Mezcla XGB + CatBoost + LightGBM + RF",
+  "elegibles": [
+    "XGBoost d3 · 1.200 árboles, lr 0,02",
+    "Mezcla XGB + CatBoost",
+    "Mezcla XGB + CatBoost + RF",
+    "Mezcla XGB + CatBoost + LightGBM + RF"
+  ],
+  "criterio": "Δ medio ≥ 0,005 en 15 folds, ≥ 11 victorias, Δ medio > ruido de semilla; Optuna: Δ ≥ 0,005 en particiones 1–2",
+  "ruido_semilla": 0.002742111397581559,
+  "cv_media_15": 0.8662691884141293,
+  "cv_std_15": 0.0689085615095294,
+  "cv_oficial": 0.8680466691622979,
+  "delta_medio": 0.007981303705755687,
+  "optuna_mejor": {
+    "max_depth": 3,
+    "learning_rate": 0.09749629206433168,
+    "n_estimators": 300,
+    "min_child_weight": 1.559958360715622,
+    "subsample": 0.5833555552068495,
+    "colsample_bytree": 0.657202534871308,
+    "gamma": 1.3567750687713405,
+    "reg_lambda": 0.24350755153331857,
+    "max_delta_step": 0.7758809796771455
+  },
+  "semilla": 42,
+  "versiones": {
+    "python": "3.13.14",
+    "numpy": "2.3.3",
+    "pandas": "2.3.2",
+    "scikit-learn": "1.8.0",
+    "scipy": "1.16.2",
+    "xgboost": "3.2.0",
+    "lightgbm": "4.7.0",
+    "catboost": "1.2.10",
+    "optuna": "5.0.0"
+  },
+  "robustez": {
+    "Δ frente a 5 semillas": 0.005042916386527237,
+    "gana a 5 semillas (de 15)": 11.0,
+    "Δ frente a la semilla media": 0.007101618277760746,
+    "gana a la semilla media (de 15)": 12.0
+  },
+  "test_aupr_confirmacion": 0.8217234118465313,
+  "filas_reentrenamiento": 170884,
+  "fraudes_reentrenamiento": 295,
+  "estabilidad": {
+    "Spearman referencia 05 frente al entregable del 04": 0.9519662257534426,
+    "máxima diferencia absoluta": 0.15039502084255227,
+    "Spearman entregable final frente al del 04": 0.9252485312123603,
+    "top 1 % compartido con el del 04 (%)": 63.91571553994732,
+    "copias de fraudes en producción: percentil mínimo": 99.97717756730424
+  },
+  "sha256_dataset": "7ee2f6230707087dd30cfe01e8bb806d27a884f1a59a948de65b4bf90bb5b4a2"
+}

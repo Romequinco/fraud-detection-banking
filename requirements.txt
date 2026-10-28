@@ -8,6 +8,8 @@ plotly
 tqdm
 xgboost
 lightgbm
+catboost
+optuna
 imbalanced-learn
 pyod
 torch

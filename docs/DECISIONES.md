@@ -34,17 +34,24 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
 - **Evidencia del 03 (2026-10-26):** el mejor supervisado, XGBoost d3 (D-2.5), da 0,865 ± 0,060 en CV y
   0,814 en test: gana al GMM eje en los 5 folds y en test (+0,078, IC 95 % 0,033–0,124). La hipótesis inicial
   se confirma para el enfoque individual; queda por ver en el 04 si el híbrido añade algo.
-- **Evidencia del 04 (2026-10-27):** comparación de tres entradas del mismo XGBoost d3, con scores recalculados mediante cinco folds externos y cinco internos por grupo: original 0,861, + GMM 0,863, + cinco scores 0,861 en CV. Elección previa al test: **XGBoost original** (D-2.7).
-- **Estado:** CERRADA (04, D-2.7)
+- **Evidencia del 04 (2026-10-27):** comparación de tres entradas del mismo XGBoost d3, con scores
+  recalculados mediante cinco folds externos y cinco internos por grupo: original 0,865, + GMM 0,864,
+  + cinco scores 0,859 en CV. El híbrido no añade nada. Elección previa al test: **XGBoost original**
+  (D-2.7).
+- **Evidencia del 05 (2026-10-28):** ningún modelo único ni el ajuste de hiperparámetros mejoran al
+  XGBoost; una mezcla por rangos de cuatro clasificadores supervisados sí, por poco (D-2.8). El enfoque
+  final sigue siendo **supervisado**, sin scores no supervisados.
+- **Estado:** CERRADA (04, D-2.7; modelo final en D-2.8)
 
 ### D-3.1 · Formato del CSV de producción
 
 - **Fecha:** 2026-10-16
-- **Decisión provisional:** una columna con cabecera `score`, 113.923 filas en el orden del fichero
-  de producción y sin índice.
-- **Pendiente:** confirmar si se quiere la cabecera. Si se lee con `pd.read_csv` sin `header=None`,
-  la cabecera evita perder la primera fila.
-- **Estado:** ABIERTA
+- **Decisión:** una columna con cabecera `score`, 113.923 filas en el orden del fichero
+  de producción y sin índice. Si se lee con `pd.read_csv` sin `header=None`, la cabecera evita perder
+  la primera fila.
+- **Actualización (2026-10-28):** el 04 genera `scores_produccion.csv` con este formato, y también los
+  respaldos del 02 y el 03. Se mantiene la cabecera.
+- **Estado:** CERRADA
 
 ### D-1.1 · Duplicados: agrupar, no eliminar
 
@@ -139,6 +146,9 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
 - **Decisión:** el 02 deja `data/output/02_scores_produccion_no_supervisado.csv` (GMM 5 · 1 eje menor
   reajustado con los normales de toda la construcción, mismo formato que D-3.1). Si el 03/04 no lo
   mejoran en CV, se entrega este. El entregable final (`scores_produccion.csv`) lo genera el 04.
+- **Actualización (2026-10-28):** el entregable final lo genera ahora el 05 (D-2.8). Los respaldos son, en
+  orden: `04_scores_produccion_xgb.csv` (XGBoost d3 del 04), `03_scores_produccion_supervisado.csv` y
+  `02_scores_produccion_no_supervisado.csv`.
 - **Estado:** CERRADA
 
 ### D-3.3 · ¿99 autocontenido o dependiente del CSV del 01?
@@ -151,6 +161,10 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   usa la misma lógica que la celda común; (b) el 99 lee `01_dataset_preparado.csv` y se asume que el
   profesor tiene el repositorio.
 - **Recomendación:** (a), porque el entregable solo incluye el notebook y el CSV de scores.
+- **Actualización (2026-10-28):** el 04 cierra el modelo final, un XGBoost d3 sin scores del 02 (D-2.7).
+  Con (a), el 99 no necesita reproducir los detectores del 02 para entrenarlo: le basta con el
+  preprocesado del 01 (`log1p_Amount`, `amount_freq`, grupos de duplicados y folds) y el XGBoost. Es la
+  única decisión abierta y lo primero que hay que resolver al montar el 99.
 - **Estado:** ABIERTA (decidir antes de montar el 99)
 
 ### D-2.5 · Mejor supervisado y scores para el 04
@@ -191,10 +205,14 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   ECOD selecciona sus cuatro variables dentro del entrenamiento correspondiente. Los OOF globales del
   02 no se reutilizan como features de esa CV. Las configuraciones históricas del 02–03 permanecen
   seleccionadas previamente; el procedimiento no elimina ese optimismo.
-- **Evidencia:** AUPR de CV: original **0,861 ± 0,060**,
-  + GMM **0,863 ± 0,057** y + cinco scores
-  **0,861 ± 0,056**. En test: **0,813**,
-  **0,811** y **0,813**, respectivamente.
+- **Evidencia:** AUPR de CV: original **0,865 ± 0,061** (reproduce el 03), + GMM **0,864 ± 0,059**
+  (Δ −0,0007, gana 4 de 5 folds) y + cinco scores **0,859 ± 0,060** (Δ −0,0056, gana 1 de 5). En test:
+  **0,815**, **0,818** y **0,807**, respectivamente; los IC 95 % bootstrap de las diferencias frente al
+  original incluyen el 0 (+0,0035 [−0,006, +0,015] y −0,0081 [−0,026, +0,007]). Cifras de
+  `04_metricas_cv.csv` y `04_metricas_test.csv` (ejecución del 2026-10-27).
+- **Prueba adicional (04 §5.1, 2026-10-28):** dar peso ×3 en `feature_weights` a la variable más predictiva o
+  a las cuatro primeras (elegidas dentro de cada entrenamiento) da 0,864 y 0,865: Δ −0,0009 y −0,0000 frente
+  al original. No se incorpora.
 - **Criterio previo al test:** un híbrido debe mejorar la media al menos 0,005 y ganar en al menos
   cuatro de cinco folds. Se prefieren menos scores salvo mejora consistente de las cinco columnas
   frente a una. Es una regla práctica de estabilidad y mejora, no significación estadística.
@@ -205,4 +223,30 @@ Formato ligero tipo ADR. ID `D-X.n`: `X` es el bloque (0 general, 1 datos/prepro
   Configuración, versiones y firma del dataset en `04_seleccion_modelo.json`; métricas, scores y
   auditoría en `04_*.csv`. Las cifras reproducidas en 04 prevalecen para esta comparación sobre la
   narración histórica del 03. El test ya examinado en 02–03 no es una evaluación externa nueva.
+- **Estado:** CERRADA (el modelo final del entregable lo sustituye D-2.8, en el 05)
+
+### D-2.8 · Optimización final: mezcla por rangos de cuatro modelos
+
+- **Fecha:** 2026-10-28
+- **Alcance (05):** últimas mejoras sobre el XGBoost d3 de D-2.7: cinco semillas promediadas, más árboles con
+  menos ritmo, búsqueda de hiperparámetros con Optuna (40 pruebas), CatBoost, LightGBM, Random Forest, tres
+  variables nuevas sin etiquetas (`frec_fila`, `importe_entero`, `importe_99`) y cuatro mezclas por rangos con
+  pesos iguales.
+- **Validación:** 15 folds (la partición oficial del 01 y dos más con `StratifiedGroupKFold` por grupos), un
+  placebo de semillas (el mismo XGBoost con semillas 43–46) para medir el ruido y una regla fijada antes de ver
+  los candidatos: Δ medio ≥ +0,005, ganar en ≥ 11 de 15 folds y superar el mayor Δ medio de los placebos
+  (0,0027). A Optuna, que busca sobre la partición oficial, se le exige además Δ ≥ +0,005 en las otras dos.
+- **Evidencia:** referencia 0,858 ± 0,066 (el mismo XGBoost da 0,865 en el equipo del 04: no es idéntico entre
+  equipos). Optuna 0,862 en la partición de búsqueda, pero −0,007 en las otras dos (sobreajuste). CatBoost
+  0,861, LightGBM 0,862 y Random Forest 0,849, sin ganar de forma consistente. Variables nuevas, +0,002.
+  Mezclas: XGB + CatBoost 0,864 (14 de 15), XGB + CatBoost + RF 0,865 y **XGB + CatBoost + LightGBM + RF 0,866 ±
+  0,069 (Δ +0,008, 12 de 15)**. Robustez: +0,005 y 11 de 15 frente al XGBoost con 5 semillas. Test (después de
+  elegir): 0,822 frente a 0,817 (Δ +0,005, IC 95 % −0,011 a +0,021); sin duplicados, 0,809.
+- **Decisión:** modelo final = **media de rangos con pesos iguales** de XGBoost d3 (configuración de D-2.5),
+  `CatBoostClassifier(iterations=1000, learning_rate=0.05, depth=6)`, `LGBMClassifier(min_child_weight=5)` y
+  `RandomForestClassifier(300, min_samples_leaf=2)`, todos con semilla 42 y las 22 variables de `FEATURES`. Se
+  reajustan con toda construcción y cada score se convierte en su rango dentro de producción.
+- **Entregable:** `data/output/scores_produccion.csv` (113.923 × 1, cabecera `score`, valores en (0, 1]). El
+  del 04 se guarda en `04_scores_produccion_xgb.csv`. Spearman 0,925 entre ambos; comparten el 63,9 % del 1 %
+  superior. Las 6 copias exactas de fraudes de construcción en producción quedan en el 0,03 % superior.
 - **Estado:** CERRADA

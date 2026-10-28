@@ -767,12 +767,7 @@ print('AUPR RBIG', average_precision_score(y_te, score))
 - Coste: 5000×144 tardó ~1 min y 10000×10 unos 14 s. Con ~170k×21 conviene empezar con 20–50k no-fraudes.
 - Se puede añadir `-logp` de RBIG como feature del 04 (calculado *out-of-fold*).
 - Como herramienta opcional de EDA (`01_EDA`): `total_correlation()` o `MutualInfoRBIG` entre bloques de variables, para justificar decisiones de selección.
-
-### F. Advertencia de integridad académica
-
-- 170.884 + 113.923 = 284.807 filas, el tamaño del conocido dataset público de fraude con tarjetas (ULB/Kaggle). Además, la descarga de ADBench del notebook de RBIG incluye `Classical/13_fraud.npz`.
-- **Usar etiquetas públicas, o ese dataset, para puntuar o ajustar algo sobre producción sería hacer trampa y no se debe hacer.**
-- El trabajo tiene que salir solo de los datos de construcción entregados; ADBench no se usa en esta práctica.
+- El trabajo sale solo de los datos de construcción entregados; los datasets que descarga el notebook de RBIG (ADBench) no se usan en esta práctica.
 
 ---
 
@@ -823,7 +818,6 @@ print('AUPR RBIG', average_precision_score(y_te, score))
 - El parche del AE convolucional no se detecta, y se explica la lección (sección 4).
 - Los empates por p≈0 en RBIG y cómo evitarlos (9.7 y E).
 - Faltan los notebooks de GAN, VAE, difusión y vídeo (sección de ejercicios).
-- Advertencia de integridad sobre ADBench y el dataset público (F).
 
 **Dudas pendientes:**
 - No se sabe qué artículo de GAN de 2017 cita el profesor, que dice "NeurIPS".

@@ -432,7 +432,7 @@ Cabecera: "Datos ejemplo de Anomalías", https://github.com/Minqi824/ADBench, au
 | Celda | Enunciado (AD_Data.md) | Solución / resultado (AD_Data_clase.md) |
 |---|---|---|
 | 3 (enun.) | Descarga directa con `requests` de `6_cardio.npz` desde GitHub; imprime claves `['X','y']` y muestra `X` | En _clase se elimina y se usa la librería |
-| 3/5 | `!pip install adbench` y `utils.download_datasets(repo='jihulab')` (descarga CV_by_ResNet18, NLP_by_BERT, Classical; entre los clásicos está `13_fraud.npz`) | Igual |
+| 3/5 | `!pip install adbench` y `utils.download_datasets(repo='jihulab')` (descarga CV_by_ResNet18, NLP_by_BERT y Classical) | Igual |
 | 5/6 | Carga `6_cardio.npz` → `X.shape=(1831, 21)`, `y.shape=(1831,)` | Igual; línea comentada `#data = np.load(path + '5_campaign.npz', ...)` |
 | 8/9 | **EJERCICIO: Plotea los datos** (en el enunciado sólo hay `drive.mount`) | Pairplot de las 6 primeras columnas con `hue=y`, scatter de las 2 primeras columnas, y además LOF |
 
