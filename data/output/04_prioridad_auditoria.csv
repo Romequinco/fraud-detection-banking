@@ -1,0 +1,6 @@
+fold,filas_ajuste_interno,filas_seleccion_interna,filas_validacion_externa,grupos_compartidos_internos,grupos_compartidos_externos,primera_variable,cuatro_variables
+0,76555,19139,23924,0,0,X14,"X14, X4, X10, X3"
+1,76555,19139,23924,0,0,X10,"X10, X14, X4, amount_freq"
+2,76556,19139,23923,0,0,X14,"X14, amount_freq, X12, X4"
+3,76555,19139,23924,0,0,X14,"X14, X10, X4, X8"
+4,76556,19139,23923,0,0,X14,"X14, amount_freq, X8, X10"
